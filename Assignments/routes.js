@@ -20,6 +20,17 @@ async function AssignmentRoutes(app) {
         }
     });
 
+    app.get("/api/assignments/:aid", async (req, res) => {
+        const { aid } = req.params;
+        const assignmentIndex = findAssignmentIndexById(aid);
+
+        if (assignmentIndex !== -1) {
+            res.send(db.assignments[assignmentIndex]);
+        } else {
+            res.sendStatus(404);
+        }
+    });
+
     app.delete("/api/assignments/:aid", async (req, res) => {
         const { aid } = req.params;
         const assignmentIndex = findAssignmentIndexById(aid);
