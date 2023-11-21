@@ -101,11 +101,13 @@ const Lab5 = (app) => {
       .get((req, res) => {
         res.json(assignment.title);
       })
-      .get('/a5/assignment/title/:newTitle', (req, res) => {
+  app.route('/a5/assignment/title/:newTitle')
+      .get((req, res) => {
         const { newTitle } = req.params;
         assignment.title = newTitle;
         res.json(assignment);
       });
+
 
   app.route('/a5/assignment/score/:newScore')
       .get((req, res) => {
