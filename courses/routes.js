@@ -1,28 +1,42 @@
 import Database from "../Database/index.js";
+
+function findCourseIndexById(id) {
+  return Database.courses.findIndex((course) => course._id === id);
+}
+
+function handleCourseNotFound(res) {
+  res.status(404).send("Course not found");
+}
+
 function CourseRoutes(app) {
   app.get("/api/courses", (req, res) => {
     const courses = Database.courses;
     res.json(courses);
   });
+
   app.get("/api/courses/:id", (req, res) => {
     const { id } = req.params;
-    const course = Database.courses.find((course) => course._id === id);
-    if (!course) {
-      res.status(404).send("Course not found");
-      return;
+    const courseIndex = findCourseIndexById(id);
+
+    if (courseIndex !== -1) {
+      res.json(Database.courses[courseIndex]);
+    } else {
+      handleCourseNotFound(res);
     }
-    res.json(course);
   });
+
   app.delete("/api/courses/:id", (req, res) => {
     const { id } = req.params;
-    const index = Database.courses.findIndex((course) => course._id === id);
-    if (index === -1) {
-      res.status(404).send("Course not found");
-      return;
+    const courseIndex = findCourseIndexById(id);
+
+    if (courseIndex !== -1) {
+      Database.courses.splice(courseIndex, 1);
+      res.sendStatus(204);
+    } else {
+      handleCourseNotFound(res);
     }
-    Database.courses.splice(index, 1);
-    res.json(204);
   });
+
   app.post("/api/courses", (req, res) => {
     const newCourse = {
       ...req.body,
@@ -31,18 +45,21 @@ function CourseRoutes(app) {
     Database.courses.unshift(newCourse);
     res.json(newCourse);
   });
+
   app.put("/api/courses/:id", (req, res) => {
     const { id } = req.params;
-    const index = Database.courses.findIndex((course) => course._id === id);
-    if (index === -1) {
-      res.status(404).send("Course not found");
-      return;
+    const courseIndex = findCourseIndexById(id);
+
+    if (courseIndex !== -1) {
+      Database.courses[courseIndex] = {
+        ...Database.courses[courseIndex],
+        ...req.body,
+      };
+      res.sendStatus(200);
+    } else {
+      handleCourseNotFound(res);
     }
-    Database.courses[index] = {
-      ...Database.courses[index],
-      ...req.body,
-    };
-    res.json(200);
   });
 }
+
 export default CourseRoutes;

@@ -5,6 +5,10 @@ function findAssignmentIndexById(aid) {
 }
 
 async function AssignmentRoutes(app) {
+    const handleAssignmentNotFound = (res) => {
+        res.sendStatus(404);
+    };
+
     app.put("/api/assignments/:aid", async (req, res) => {
         const { aid } = req.params;
         const assignmentIndex = findAssignmentIndexById(aid);
@@ -16,7 +20,7 @@ async function AssignmentRoutes(app) {
             };
             res.sendStatus(204);
         } else {
-            res.sendStatus(404);
+            handleAssignmentNotFound(res);
         }
     });
 
@@ -27,7 +31,7 @@ async function AssignmentRoutes(app) {
         if (assignmentIndex !== -1) {
             res.send(db.assignments[assignmentIndex]);
         } else {
-            res.sendStatus(404);
+            handleAssignmentNotFound(res);
         }
     });
 
@@ -39,7 +43,7 @@ async function AssignmentRoutes(app) {
             db.assignments.splice(assignmentIndex, 1);
             res.sendStatus(200);
         } else {
-            res.sendStatus(404);
+            handleAssignmentNotFound(res);
         }
     });
 
