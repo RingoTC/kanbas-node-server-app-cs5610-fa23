@@ -85,6 +85,15 @@ function UserRoutes(app) {
     }
   };
 
+  const createUser = async (req, res) => {
+    try {
+      const user = await dao.createUser(req.body);
+      res.json(user);
+    } catch (error) {
+      handleErrors(res);
+    }
+  }
+  app.post("/api/users", createUser);
   app.get("/api/users", findAllUser);
   app.get("/api/users/:id", findUserbyId);
   app.put("/api/users/:userId", updateUser);
